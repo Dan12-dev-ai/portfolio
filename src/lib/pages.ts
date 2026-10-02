@@ -24,8 +24,11 @@ export function readPage(file: string, fallback: string): string {
   let html = fallback
   try {
     html = readFileSync(join(process.cwd(), 'src', file), 'utf8')
-  } catch {
-    // Keep the fallback document so the route never hard-fails.
+  } catch (error) {
+    // The fallback keeps the route from hard-failing, but a missing document is
+    // a packaging bug (see `outputFileTracingIncludes` in next.config.js) and
+    // must not fail silently — otherwise only the chrome renders.
+    console.error(`[pages] failed to read src/${file}:`, error)
   }
 
   if (cacheEnabled) cache.set(file, html)
