@@ -1,0 +1,48 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+.yarn/install-state.gz
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# local env files
+.env*.local
+
+# runtime data store (contact messages, subscribers, click analytics).
+# Contains visitor IP addresses and user agents — never commit this.
+data/
+portfolio-db.json
+
+# local visual-review artefacts
+snapshots/
+
+# stray headshot copy kept at the project root during design work.
+# The site serves public/avatar.png instead.
+danid-port.png
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts

@@ -1,0 +1,586 @@
+<!DOCTYPE html><html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Daniel Degu — AI &amp; Distributed Systems Engineer</title>
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            surface: '#f5f7fa',
+            surfaceBorder: '#dfe7f1',
+            accent: {
+              cyan: '#0ea5e9',
+              blue: '#2563eb',
+              glow: 'rgba(14, 165, 233, 0.12)',
+              coral: '#f97316'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Space Grotesk', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace']
+          }
+        }
+      }
+    }
+</script>
+<style data-purpose="custom-animations">
+    :root {
+      --bg: #f5f7fa;
+      --panel: rgba(255,255,255,0.8);
+      --panel-strong: #ffffff;
+      --line: rgba(15, 23, 42, 0.08);
+      --text: #101827;
+      --muted: #55657c;
+      --accent: #0ea5e9;
+      --accent-strong: #2563eb;
+      --accent-soft: rgba(14, 165, 233, 0.12);
+      --coral: #f97316;
+      --shadow: 0 18px 40px -28px rgba(15, 23, 42, 0.45);
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    a { text-decoration: none; }
+    .backdrop-glass { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+    .hero-shell {
+      position: relative;
+      max-width: 1440px;
+      width: min(90vw, 1440px);
+      margin: 0 auto;
+      padding: 5.5rem 0 3rem;
+    }
+    .hero-layout {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      align-items: center;
+      gap: 2.5rem;
+      min-height: calc(100vh - 140px);
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.7rem;
+      margin: 0 0 1.5rem;
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--accent);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .eyebrow::before {
+      content: '';
+      width: 2.2rem;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent));
+      display: block;
+    }
+    .hero-title {
+      margin: 0;
+      max-width: 12ch;
+      font-size: clamp(3.1rem, 5.5vw, 6rem);
+      line-height: 0.95;
+      letter-spacing: -0.065em;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      color: #0b1320;
+    }
+    .hero-title .gradient {
+      display: block;
+      background: linear-gradient(90deg, var(--accent) 0%, var(--accent-strong) 52%, #7c3aed 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .hero-copy {
+      max-width: 38rem;
+    }
+    .hero-subtitle {
+      margin: 1.5rem 0 0;
+      font-size: clamp(1.05rem, 1.5vw, 1.35rem);
+      line-height: 1.5;
+      color: var(--muted);
+    }
+    .hero-lead {
+      margin: 1rem 0 0;
+      max-width: 34rem;
+      font-size: 1rem;
+      line-height: 1.8;
+      color: #4b5a6f;
+    }
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      min-height: 3.25rem;
+      padding: 0.9rem 1.5rem;
+      border-radius: 0.9rem;
+      font-size: 0.78rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 700;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      font-family: 'Inter', sans-serif;
+    }
+    .button:hover { transform: translateY(-2px); }
+    .button.primary {
+      color: #fff;
+      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+      box-shadow: 0 18px 32px -20px rgba(37, 99, 235, 0.8);
+    }
+    .button.secondary {
+      color: var(--text);
+      background: rgba(255,255,255,0.72);
+      border: 1px solid var(--line);
+    }
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      padding: 0;
+      margin: 2rem 0 0;
+      list-style: none;
+    }
+    .meta-row li {
+      padding: 0.65rem 0.9rem;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.38);
+      background: rgba(255,255,255,0.5);
+      color: var(--muted);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+    }
+    .visual-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 32rem;
+    }
+    .visual-shell {
+      position: relative;
+      width: min(100%, 36rem);
+      aspect-ratio: 1 / 1.05;
+      border-radius: 2rem;
+      border: 1px solid rgba(148, 163, 184, 0.28);
+      background: linear-gradient(180deg, rgba(255,255,255,0.8), rgba(248,250,252,0.85));
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .visual-shell::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: linear-gradient(rgba(15, 23, 42, 0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(15, 23, 42, 0.04) 1px, transparent 1px);
+      background-size: 32px 32px;
+      mask-image: radial-gradient(circle at center, black 50%, transparent 100%);
+      opacity: 0.65;
+    }
+    .orb { position: absolute; border-radius: 50%; filter: blur(8px); opacity: 0.7; }
+    .orb.one { width: 24rem; height: 24rem; background: rgba(14, 165, 233, 0.12); right: -4rem; top: -2rem; }
+    .orb.two { width: 17rem; height: 17rem; background: rgba(37, 99, 235, 0.08); left: -2rem; bottom: -3rem; }
+    .network {
+      position: absolute;
+      inset: 12% 14% 16%;
+      display: grid;
+      place-items: center;
+    }
+    .stack {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1.1rem;
+    }
+    .node {
+      position: relative;
+      z-index: 2;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 9.25rem;
+      padding: 0.8rem 1.2rem;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.82);
+      border: 1px solid rgba(148,163,184,0.35);
+      color: var(--text);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      box-shadow: 0 10px 20px -16px rgba(15, 23, 42, 0.5);
+    }
+    .node.primary { color: var(--accent-strong); }
+    .node.accent { color: var(--coral); }
+    .node::before {
+      content: "";
+      width: 0.55rem;
+      height: 0.55rem;
+      border-radius: 50%;
+      margin-right: 0.6rem;
+      background: currentColor;
+      box-shadow: 0 0 0 5px rgba(255,255,255,0.7);
+    }
+    .pipeline {
+      position: absolute;
+      width: 2px;
+      height: 2.5rem;
+      background: linear-gradient(180deg, rgba(14, 165, 233, 0.4), rgba(37,99,235,0.9));
+      border-radius: 999px;
+      z-index: 1;
+    }
+    .pipeline.one { top: 28%; }
+    .pipeline.two { top: 41%; }
+    .pipeline.three { top: 54%; }
+    .pipeline.four { top: 67%; }
+    .floating-panel {
+      position: absolute;
+      right: 1.25rem;
+      bottom: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      width: min(14rem, 42vw);
+      padding: 1rem 1.1rem;
+      border-radius: 1rem;
+      border: 1px solid rgba(148,163,184,0.28);
+      background: rgba(255,255,255,0.8);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 16px 30px -24px rgba(15,23,42,0.4);
+    }
+    .floating-panel small {
+      color: #5e7187;
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .floating-panel strong {
+      font-size: 1.05rem;
+      font-family: 'Space Grotesk', sans-serif;
+      line-height: 1.2;
+    }
+    .floating-panel span {
+      color: #4b5a6f;
+      font-size: 0.8rem;
+      line-height: 1.5;
+    }
+    .stats-wrap { max-width: 1440px; width: min(90vw, 1440px); margin: 0 auto; padding: 0 0 3rem; }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 1rem;
+      padding: 1.25rem 0 0;
+    }
+    .stat {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+      padding: 1.4rem 1.25rem;
+      border-radius: 1.1rem;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.72);
+      box-shadow: 0 10px 20px -18px rgba(15,23,42,0.38);
+    }
+    .stat strong {
+      font-size: clamp(1.55rem, 2vw, 2.2rem);
+      line-height: 1.1;
+      letter-spacing: -0.05em;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+    .stat span {
+      color: var(--muted);
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .story {
+      max-width: 1440px;
+      width: min(90vw, 1440px);
+      margin: 0 auto;
+      padding: 2.5rem 0 4rem;
+    }
+    .story-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .story-header h2 {
+      margin: 0;
+      font-size: clamp(2.2rem, 4vw, 4rem);
+      line-height: 1;
+      letter-spacing: -0.06em;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+    .story-header p {
+      margin: 0;
+      max-width: 32rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+    .focus-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 1.5rem;
+    }
+    .focus-card {
+      padding: 1.6rem 1.5rem;
+      border-radius: 1.5rem;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.75);
+      box-shadow: 0 12px 26px -24px rgba(15,23,42,0.5);
+    }
+    .focus-card .kicker {
+      display: inline-flex;
+      padding: 0.45rem 0.7rem;
+      border-radius: 999px;
+      background: rgba(14,165,233,0.08);
+      color: var(--accent-strong);
+      font-size: 0.65rem;
+      letter-spacing: 0.14em;
+      font-weight: 700;
+      text-transform: uppercase;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .focus-card h3 {
+      margin: 1rem 0 0.6rem;
+      font-size: clamp(1.5rem, 2vw, 2.2rem);
+      line-height: 1.1;
+      letter-spacing: -0.05em;
+    }
+    .focus-card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+    .focus-stack {
+      margin-top: 1.1rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+    }
+    .focus-stack span {
+      display: inline-flex;
+      padding: 0.45rem 0.6rem;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.32);
+      background: rgba(255,255,255,0.6);
+      font-size: 0.72rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: #4a5970;
+    }
+    .band {
+      max-width: 1440px;
+      width: min(90vw, 1440px);
+      margin: 0 auto 5rem;
+      padding: 1.8rem 1.7rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      border-radius: 1.5rem;
+      background: linear-gradient(135deg, rgba(255,255,255,0.82), rgba(240,246,255,0.9));
+      border: 1px solid var(--line);
+      box-shadow: 0 16px 30px -24px rgba(15,23,42,0.5);
+    }
+    .band strong {
+      display: block;
+      font-size: clamp(1.3rem, 2vw, 2rem);
+      letter-spacing: -0.05em;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+    .band p { margin: 0.5rem 0 0; color: var(--muted); }
+    @media (max-width: 960px) {
+      .hero-layout, .focus-grid { grid-template-columns: 1fr; }
+      .hero-shell { padding-top: 4rem; }
+      .hero-layout { min-height: auto; }
+      .story-header, .band { flex-direction: column; align-items: flex-start; }
+      .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 640px) {
+      .stats-grid { grid-template-columns: 1fr; }
+      .button { width: 100%; }
+      .cta-row { width: 100%; }
+      .visual-shell { aspect-ratio: 1 / 1.1; }
+      .node { min-width: 7.5rem; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-[#ffffff] via-[#f8fafc] to-[#f0f9ff] text-slate-800 font-sans antialiased min-h-screen selection:bg-cyan-100 selection:text-cyan-900 flex flex-col justify-between overflow-x-hidden">
+<header class="w-full bg-white/80 backdrop-glass border-b border-slate-200/80 sticky top-0 z-50 transition-all duration-300 shadow-[0_1px_8px_rgba(15,23,42,0.04)]">
+<div class="max-w-[1440px] mx-auto px-6 lg:px-12 h-20 flex items-center justify-between">
+<a aria-label="Daniel Degu Portfolio Home" class="flex items-center gap-3 group focus:outline-none" href="/">
+<div class="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-500 via-blue-600 to-indigo-600 flex items-center justify-center font-display font-semibold text-white text-lg tracking-wider shadow-lg shadow-sky-500/20 group-hover:scale-105 transition-transform duration-300">DD</div>
+<div class="flex flex-col"><span class="font-display font-semibold text-lg text-slate-900 tracking-wide group-hover:text-sky-600 transition-colors">Daniel Degu</span><span class="text-[10px] font-mono tracking-widest text-sky-600 font-semibold uppercase">AI &amp; DISTRIBUTED SYSTEMS ENGINEER</span></div>
+</a>
+<nav class="hidden md:flex items-center space-x-1 lg:space-x-6 text-sm font-medium text-slate-600">
+<a class="text-sky-600 font-semibold px-3 py-2 rounded-lg transition-colors duration-200" href="/">Home</a>
+<a class="hover:text-slate-900 hover:bg-slate-100/60 px-3 py-2 rounded-lg transition-colors duration-200" href="/experience">Experience</a>
+<a class="hover:text-slate-900 hover:bg-slate-100/60 px-3 py-2 rounded-lg transition-colors duration-200" href="/contact">Contact</a>
+<a class="hover:text-slate-900 hover:bg-slate-100/60 px-3 py-2 rounded-lg transition-colors duration-200" href="/resume">Resume</a>
+</nav>
+<div class="flex items-center gap-4"><a class="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-gradient-to-r from-sky-500 via-blue-600 to-indigo-600 text-white font-display font-semibold text-xs tracking-wider uppercase hover:opacity-95 shadow-lg shadow-sky-500/20 active:scale-95 transition-all duration-200" href="/contact">Hire Me</a></div>
+</div>
+</header>
+<main class="flex-grow">
+<section class="hero-shell" id="hero">
+<div class="hero-layout">
+<div class="hero-copy">
+<p class="eyebrow">AI &amp; Distributed Systems Engineer</p>
+<h1 class="hero-title">AI &amp; Distributed<br><span class="gradient">System Engineering</span></h1>
+<p class="hero-subtitle">I build agentic workflows, resilient backend systems, and observable AI infrastructure that can survive real-world load.</p>
+<p class="hero-lead">Focused on distributed systems, AI engineering, multi-agent orchestration, observability, and the operational discipline required to ship intelligent products without losing reliability.</p>
+<div class="cta-row">
+<a class="button primary" href="/experience">Explore systems</a>
+<a class="button secondary" href="/resume">Download resume</a>
+</div>
+<ul class="meta-row">
+<li>Distributed Systems</li>
+<li>AI Engineering</li>
+<li>Observability</li>
+<li>Automation</li>
+</ul>
+</div>
+<div class="visual-wrap">
+<div class="visual-shell">
+<div class="orb one" aria-hidden="true"></div>
+<div class="orb two" aria-hidden="true"></div>
+<div class="network">
+<div class="stack">
+<div class="node primary">AI</div>
+<div class="pipeline one"></div>
+<div class="node">Agents</div>
+<div class="pipeline two"></div>
+<div class="node accent">Services</div>
+<div class="pipeline three"></div>
+<div class="node">Systems</div>
+<div class="pipeline four"></div>
+<div class="node">Infrastructure</div>
+</div>
+</div>
+<div class="floating-panel">
+<small>System signal</small>
+<strong>Reliable by design</strong>
+<span>Observability, recovery loops, and bounded autonomy across distributed executions.</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="stats-wrap" id="stats">
+<div class="stats-grid">
+<div class="stat pd-reveal"><strong data-count-to>25+</strong><span>Agent workflows</span></div>
+<div class="stat pd-reveal"><strong data-count-to>99.9%</strong><span>Execution reliability</span></div>
+<div class="stat pd-reveal"><strong data-count-to>1.2M+</strong><span>Events processed</span></div>
+<div class="stat pd-reveal"><strong data-count-to>&lt;180ms</strong><span>Median latency</span></div>
+</div>
+</section>
+<section class="story" id="services">
+<div class="story-header">
+<div>
+<p class="eyebrow">Engineering focus</p>
+<h2>Systems that coordinate intelligence at scale.</h2>
+</div>
+<p>Focused on distributed systems, AI engineering, multi-agent architectures, backend infrastructure, observability, and reliable intelligent systems.</p>
+</div>
+<div class="focus-grid">
+<article class="focus-card">
+<span class="kicker">Distributed Systems</span>
+<h3>Service architecture with reliability built in.</h3>
+<p>From async processing and queue-backed workers to cache layers and schema-aware APIs, I design systems that remain stable under failure, scale, and changing traffic.</p>
+<div class="focus-stack"><span>Service design</span><span>Async workers</span><span>Queues</span><span>Observability</span></div>
+</article>
+<article class="focus-card">
+<span class="kicker">AI Engineering</span>
+<h3>Agentic systems with measurable intelligence.</h3>
+<p>I engineer the infrastructure around language models: orchestration, tool boundaries, prompt and context design, evaluation loops, safety guardrails, and inference pipelines that teams can trust.</p>
+<div class="focus-stack"><span>LLM integration</span><span>RAG</span><span>Evaluation</span><span>Multi-agent</span></div>
+</article>
+</div>
+</section>
+<section class="band" id="explore">
+<div>
+<strong>Four systems, built end-to-end.</strong>
+<p>Clinical triage, orchestrated agent swarms, autonomous discovery, and resilient marketplace infrastructure.</p>
+</div>
+<div class="cta-row" style="margin: 0;">
+<a class="button primary" href="/experience">See the engineering record</a>
+<a class="button secondary" href="/contact">Start a conversation</a>
+</div>
+</section>
+</main>
+<footer class="w-full bg-white border-t border-slate-200/80 py-4 text-center">
+<div class="max-w-[1440px] mx-auto px-6 text-xs text-slate-500 font-mono flex flex-col sm:flex-row items-center justify-between gap-2">
+<div>© 2025 Daniel Degu. All rights reserved.</div>
+<div class="flex items-center gap-4 text-slate-500"><span>Architecting Next-Gen Intelligence</span><span>•</span><a class="text-sky-600 hover:underline" href="#hero">Back to top</a></div>
+</div>
+</footer>
+<script data-purpose="event-handlers">
+(function initLanding() {
+  function animateValue(node, raw) {
+    var numeric = String(raw).match(/[0-9]+(\.[0-9]+)?/);
+    if (!numeric) return;
+    var target = parseFloat(numeric[0]);
+    if (!isFinite(target) || target === 0) return;
+    var decimals = numeric[0].indexOf('.') > -1 ? 1 : 0;
+    var prefix = String(raw).trim().charAt(0) === '<' ? '< ' : '';
+    var suffix = String(raw).replace(/^[^0-9]*[0-9]+(\.[0-9]+)?/, '').trim();
+    var start = null;
+    var duration = 1400;
+    function step(timestamp) {
+      if (start === null) start = timestamp;
+      var progress = Math.min(1, (timestamp - start) / duration);
+      var eased = 1 - Math.pow(1 - progress, 3);
+      node.textContent = prefix + (target * eased).toFixed(decimals) + suffix;
+      if (progress < 1) window.requestAnimationFrame(step);
+      else node.textContent = raw;
+    }
+    window.requestAnimationFrame(step);
+  }
+  var statNodes = document.querySelectorAll('[data-count-to]');
+  Array.prototype.forEach.call(statNodes, function (node) { var original = node.textContent.trim(); node.setAttribute('data-count-final', original); });
+  if (statNodes.length && 'IntersectionObserver' in window) {
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        animateValue(entry.target, entry.target.getAttribute('data-count-final'));
+        observer.unobserve(entry.target);
+      });
+    }, { threshold: 0.4 });
+    Array.prototype.forEach.call(statNodes, function (node) { observer.observe(node); });
+  }
+})();
+</script>
+</body></html>

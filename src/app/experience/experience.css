@@ -1,0 +1,332 @@
+/**
+ * Experience page design system.
+ *
+ * A scoped token + component layer for the `/experience` page: a light, white
+ * palette (`#FFFFFF`) that matches the site chrome, a subtle radial tint +
+ * grid overlay, glassmorphic surfaces, an indigo → cyan accent gradient, the
+ * vertical career timeline, shimmer CTAs and chevron bullet lists.
+ *
+ * Layering rules:
+ *   • Tokens and component classes live in `@layer components` so Tailwind
+ *     utilities (e.g. `hover:border-indigo-500/50`) can still override them.
+ *   • The contrast corrections at the bottom are intentionally unlayered
+ *     so they win over literal utility colors like `text-indigo-400` and keep
+ *     WCAG-readable contrast on white.
+ */
+
+/* Registers this file with Tailwind's component layer so the `@layer
+   components` block below participates in the utility cascade. */
+@tailwind components;
+
+/* ------------------------------------------------------------------ */
+/* Theme tokens                                                        */
+/* ------------------------------------------------------------------ */
+
+/* Light, white palette — same family as `--pd-bg: #ffffff` in portfolio.css,
+   so the page background matches the chrome on every other route. */
+.exp-shell {
+  --exp-bg: #ffffff;
+  --exp-text: #0f172a;
+  --exp-muted: #64748b;
+  --exp-accent-text: #4f46e5;
+  --exp-glass-bg: rgba(255, 255, 255, 0.7);
+  --exp-glass-border: rgba(15, 23, 42, 0.08);
+  --exp-grid-line: rgba(15, 23, 42, 0.05);
+  --exp-tint-a: rgba(99, 102, 241, 0.1);
+  --exp-tint-b: rgba(34, 211, 238, 0.09);
+  --exp-corner: rgba(79, 70, 229, 0.16);
+  --exp-cta-wash: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(34, 211, 238, 0.08) 45%, transparent 80%);
+  --exp-chevron: #4f46e5;
+  --exp-shadow-soft: 0 18px 40px -30px rgba(15, 23, 42, 0.4);
+}
+
+/* ------------------------------------------------------------------ */
+/* Shell: tinted background + subtle radial grid overlay               */
+/* ------------------------------------------------------------------ */
+
+.exp-shell {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  color: var(--exp-text);
+  background-color: var(--exp-bg);
+  background-image:
+    radial-gradient(52rem 34rem at 6% -10%, var(--exp-tint-a), transparent 68%),
+    radial-gradient(46rem 30rem at 97% 2%, var(--exp-tint-b), transparent 70%),
+    linear-gradient(to right, var(--exp-grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--exp-grid-line) 1px, transparent 1px);
+  background-repeat: no-repeat, no-repeat, repeat, repeat;
+  background-size: auto, auto, 72px 72px, 72px 72px;
+}
+
+/* Keep the browser overscroll area in sync with the page. */
+html:has(.exp-shell) { background-color: #ffffff; }
+
+/* The canonical header is position: fixed — reserve its height so the first
+   section starts below it, exactly like `body.pd-offset` on the HTML pages. */
+.exp-shell {
+  padding-top: var(--pd-header-h, 5.25rem);
+}
+
+.exp-shell ::selection {
+  background: rgba(99, 102, 241, 0.4);
+  color: #f8fafc;
+}
+
+.exp-shell a:focus-visible,
+.exp-shell button:focus-visible {
+  outline: 2px solid #22d3ee;
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* ------------------------------------------------------------------ */
+/* Entrance micro-interaction (IntersectionObserver-driven)            */
+/* ------------------------------------------------------------------ */
+
+/* The individual `translate` property (not `transform`) is used so the
+   hover-lift utilities (`hover:-translate-y-0.5`) still compose on cards,
+   and the transition list covers the card hover properties too. */
+[data-reveal] {
+  opacity: 0;
+  translate: 0 14px;
+  transition:
+    opacity 0.65s cubic-bezier(0.2, 0.8, 0.2, 1),
+    translate 0.65s cubic-bezier(0.2, 0.8, 0.2, 1),
+    transform 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+[data-reveal].is-visible {
+  opacity: 1;
+  translate: 0 0;
+}
+
+@media (scripting: none) {
+  [data-reveal] { opacity: 1; translate: none; }
+}
+
+@keyframes exp-node-glow {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 4px var(--exp-bg),
+      0 0 14px 2px rgba(99, 102, 241, 0.5);
+  }
+  50% {
+    box-shadow:
+      0 0 0 4px var(--exp-bg),
+      0 0 24px 6px rgba(34, 211, 238, 0.55);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  [data-reveal] { opacity: 1 !important; translate: none !important; }
+}
+
+/* ------------------------------------------------------------------ */
+/* Components                                                          */
+/* ------------------------------------------------------------------ */
+
+@layer components {
+  .exp-container {
+    width: 100%;
+    max-width: 80rem;
+    margin-inline: auto;
+    padding-inline: 1.5rem;
+  }
+
+  @media (min-width: 1024px) {
+    .exp-container { padding-inline: 3rem; }
+  }
+
+  /* Glassmorphic surface: hairline border + backdrop blur. Hover states are
+     expressed as Tailwind utilities (`hover:border-indigo-500/50` etc.) so
+     they win from the utilities layer. */
+  .exp-glass {
+    background-color: var(--exp-glass-bg);
+    border: 1px solid var(--exp-glass-border);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: var(--exp-shadow-soft);
+  }
+
+  .exp-muted { color: var(--exp-muted); }
+
+  /* Monospace eyebrow tag — color comes from `text-indigo-400`, corrected
+     for light mode by the unlayered block at the bottom of this file. */
+  .exp-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .exp-eyebrow::before {
+    content: '';
+    flex: none;
+    width: 1.1rem;
+    height: 1px;
+    background-image: linear-gradient(90deg, #6366f1, #22d3ee);
+  }
+  .exp-eyebrow--plain::before { display: none; }
+
+  .exp-link {
+    color: var(--exp-muted);
+    transition: color 0.2s ease;
+  }
+  .exp-link:hover { color: var(--exp-text); }
+
+  /* Gradient CTA with a sweeping shimmer on hover. Button content should be
+     wrapped in `relative z-10` spans so it paints above the sheen. */
+  .exp-btn {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .exp-btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    transform: translateX(-130%);
+    background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, 0.45) 50%, transparent 65%);
+    transition: transform 0.7s ease;
+  }
+  .exp-btn:hover::after { transform: translateX(130%); }
+
+  /* Custom chevron bullets. */
+  .exp-chevron-list {
+    display: grid;
+    gap: 0.55rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .exp-chevron-list li {
+    position: relative;
+    padding-left: 1.4rem;
+  }
+  .exp-chevron-list li::before {
+    content: '';
+    position: absolute;
+    left: 0.2rem;
+    top: 0.5em;
+    width: 0.4rem;
+    height: 0.4rem;
+    border-top: 2px solid var(--exp-chevron);
+    border-right: 2px solid var(--exp-chevron);
+    transform: rotate(45deg);
+    opacity: 0.9;
+  }
+
+  /* Skill pills: base colors come from Tailwind utilities
+     (`bg-slate-800/50 border-slate-700 text-slate-300`). */
+  .exp-skill {
+    transition:
+      box-shadow 0.25s ease,
+      border-color 0.25s ease;
+  }
+
+  /* Vertical career timeline: gradient rail + glowing active node. */
+  .exp-timeline {
+    position: relative;
+    display: grid;
+    gap: 2.5rem;
+    padding-left: 2.5rem;
+  }
+  .exp-timeline-item { position: relative; }
+  .exp-timeline-item:not(:last-child)::before {
+    content: '';
+    position: absolute;
+    left: -1.75rem;
+    top: 2rem;
+    bottom: -4.5rem;
+    width: 2px;
+    border-radius: 9999px;
+    background-image: linear-gradient(180deg, #6366f1 0%, #22d3ee 100%);
+  }
+  .exp-node {
+    position: absolute;
+    left: calc(-1.75rem + 1px);
+    top: 2rem;
+    width: 0.875rem;
+    height: 0.875rem;
+    transform: translateX(-50%);
+    background-image: linear-gradient(135deg, #6366f1, #22d3ee);
+    border-radius: 9999px;
+    box-shadow:
+      0 0 0 4px var(--exp-bg),
+      0 0 0 6px rgba(99, 102, 241, 0.28);
+  }
+  .exp-node--active { animation: exp-node-glow 2.6s ease-in-out infinite; }
+
+  /* Gradient corner accent for principle cards. */
+  .exp-corner { position: relative; overflow: hidden; }
+  .exp-corner::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 7rem;
+    height: 7rem;
+    pointer-events: none;
+    background-image: radial-gradient(closest-side, var(--exp-corner), transparent 72%);
+    transform: translate(30%, -30%);
+    transition: transform 0.4s ease;
+  }
+  .exp-corner:hover::before { transform: translate(22%, -22%); }
+
+  /* Closing CTA panel: glass + accent wash. */
+  .exp-cta { background-image: var(--exp-cta-wash); }
+
+  /* Hero architecture diagram — theme-aware SVG paints. */
+  .exp-viz-frame {
+    fill: var(--exp-glass-bg);
+    stroke: var(--exp-glass-border);
+  }
+  .exp-viz-card {
+    fill: var(--exp-bg);
+    stroke: var(--exp-glass-border);
+  }
+  .exp-viz-dot { fill: #818cf8; }
+  .exp-viz-label {
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    fill: var(--exp-muted);
+  }
+  .exp-viz-kicker {
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    fill: var(--exp-accent-text);
+  }
+  .exp-viz-value {
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    fill: var(--exp-text);
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Light-theme corrections for literal dark-palette utility colors.    */
+/* Unlayered on purpose: they must beat Tailwind's utilities layer.    */
+/* ------------------------------------------------------------------ */
+
+[data-theme='light'] .text-indigo-400 { color: #4f46e5; }
+[data-theme='light'] .bg-slate-800\/50 { background-color: rgba(255, 255, 255, 0.75); }
+[data-theme='light'] .border-slate-700 { border-color: rgba(15, 23, 42, 0.12); }
+[data-theme='light'] .text-slate-300 { color: #475569; }

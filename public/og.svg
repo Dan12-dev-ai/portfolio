@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-label="Daniel Degu — AI &amp; Distributed Systems Engineer">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0b1220"/>
+      <stop offset="100%" stop-color="#10203c"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#22d3ee"/>
+      <stop offset="100%" stop-color="#3b82f6"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <g opacity="0.16" stroke="#7dd3fc" stroke-width="1">
+    <path d="M0 120h1200M0 240h1200M0 360h1200M0 480h1200M150 0v630M350 0v630M550 0v630M750 0v630M950 0v630M1150 0v630"/>
+  </g>
+  <circle cx="1010" cy="200" r="150" fill="none" stroke="url(#accent)" stroke-width="8" opacity="0.55"/>
+  <circle cx="1010" cy="200" r="110" fill="url(#accent)" opacity="0.14"/>
+  <text x="90" y="250" font-family="Outfit, Space Grotesk, Segoe UI, sans-serif" font-size="78" font-weight="800" fill="#ffffff">Daniel Degu</text>
+  <text x="92" y="316" font-family="JetBrains Mono, monospace" font-size="30" fill="#7dd3fc" letter-spacing="3">AI &amp; DISTRIBUTED SYSTEMS ENGINEER</text>
+  <text x="92" y="392" font-family="Inter, Segoe UI, sans-serif" font-size="26" fill="#cbd5f5">Multi-agent swarms · LLM pipelines · distributed backends</text>
+  <text x="92" y="500" font-family="JetBrains Mono, monospace" font-size="22" fill="#93c5fd" letter-spacing="2">LINKEDIN · GITHUB · X · TELEGRAM</text>
+  <rect x="92" y="530" width="240" height="6" rx="3" fill="url(#accent)"/>
+</svg>

@@ -1,0 +1,1761 @@
+/* ==========================================================================
+   portfolio.css — shared chrome + runtime styling
+   Loaded on every served page. Intentionally free of Tailwind so the header,
+   footer, drawer and toasts look identical regardless of the Tailwind CDN
+   config each page document ships with.
+   ========================================================================== */
+
+/* The chrome ships without Tailwind, so it needs its own box-sizing reset.
+   Without it `width: 100%` + horizontal padding on `.pd-container` (and the
+   full-bleed header row) overflows the viewport and scrolls the page sideways
+   on pages that do not load Tailwind's preflight (e.g. contact). */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+:root {
+  --pd-header-h: 5.25rem;
+  --pd-radius: 16px;
+  --pd-max: 1280px;
+  --pd-pad: clamp(1rem, 4vw, 3rem);
+  --pd-bg: #ffffff;
+  --pd-surface: #f6f7fd;
+  --pd-border: rgba(15, 23, 42, 0.1);
+  --pd-text: #0d1526;
+  --pd-muted: #5a6478;
+  --pd-accent: #0891b2;
+  --pd-accent-2: #2563eb;
+  --pd-accent-soft: rgba(8, 145, 178, 0.12);
+  --pd-coral: #f97316;
+  --pd-coral-soft: rgba(249, 115, 22, 0.12);
+  --pd-font: 'Inter', 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --pd-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --pd-display: 'Space Grotesk', 'Outfit', sans-serif;
+}
+
+/* One identity across the whole site: the landing page's cyan → blue → coral
+   on white/slate. The page bodies ship their own Tailwind colour config (each
+   document defines its own), so these variables only drive the shared chrome —
+   header, footer, drawer, toasts — which must match on every page. */
+
+body.pd-body {
+  position: relative;
+}
+
+body.pd-offset {
+  padding-top: var(--pd-header-h) !important;
+}
+
+.pd-container {
+  width: 100%;
+  max-width: var(--pd-max);
+  margin-inline: auto;
+  padding-inline: var(--pd-pad);
+}
+
+.pd-muted {
+  color: var(--pd-muted);
+  font-size: 0.86rem;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* --------------------------------------------------------------- header */
+
+.pd-header {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 70;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--pd-border);
+  transition: box-shadow 0.25s ease, background 0.25s ease;
+}
+
+.pd-header.is-scrolled {
+  box-shadow: 0 6px 18px -16px rgba(15, 23, 42, 0.35);
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.pd-header__row {
+  height: var(--pd-header-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+/* The header runs full-bleed so the brand mark anchors the left corner while
+   the nav + actions sit in the right corner. Scoped to the header only, so
+   page content keeps its normal centred container width. */
+.pd-header .pd-header__row {
+  max-width: none;
+  margin-inline: 0;
+  padding-inline: clamp(0.75rem, 1.5vw, 1.5rem);
+}
+
+.pd-progress {
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  height: 2px;
+  width: 0;
+  background: linear-gradient(90deg, var(--pd-accent), var(--pd-accent-2));
+  transition: width 0.12s linear;
+}
+.pd-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  text-decoration: none;
+  min-width: 0;
+}
+
+.pd-brand__mark {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 13px;
+  background: linear-gradient(135deg, var(--pd-accent), var(--pd-accent-2));
+  color: #fff;
+  font-family: var(--pd-display);
+  font-weight: 700;
+  font-size: 1.1rem;
+  letter-spacing: 0.04em;
+  box-shadow: 0 2px 8px -4px rgba(8, 145, 178, 0.45);
+  flex: 0 0 auto;
+}
+
+/* Photo logo variant: the brand mark holds the site logo instead of initials. */
+.pd-brand__mark--photo {
+  overflow: hidden;
+  padding: 0;
+}
+
+.pd-brand__mark--photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.25s ease;
+}
+
+.pd-brand:hover .pd-brand__mark--photo img {
+  transform: scale(1.06);
+}
+
+.pd-brand__text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.pd-brand__name {
+  font-family: var(--pd-display);
+  font-weight: 600;
+  font-size: 1.12rem;
+  color: var(--pd-text);
+  line-height: 1.15;
+  white-space: nowrap;
+}
+
+.pd-brand__role {
+  font-family: var(--pd-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--pd-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Frameless nav — no box; items float in the header bar itself. Pushed to the
+   right (auto margin absorbs the row's free space) so the links sit with the
+   actions instead of floating mid-bar. */
+.pd-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  margin-inline-start: auto;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  border: none;
+}
+
+.pd-nav__link {
+  position: relative;
+  isolation: isolate; /* keeps the z-index:-1 pill inside the link */
+  font-family: var(--pd-font);
+  font-size: 0.92rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: var(--pd-muted);
+  text-decoration: none;
+  padding: 0.6rem 1rem;
+  border-radius: 11px;
+  transition: color 0.24s ease, transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  white-space: nowrap;
+  /* Entrance re-runs on every page load, so switching pages eases the links
+     back in. `backwards` (not `forwards`) so the hover transform still wins
+     once the animation has finished. */
+  animation: pd-nav-link-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.04s backwards;
+}
+
+/* Soft accent halo behind the label: a radial falloff plus a blur, so hover
+   fades into the bar instead of snapping a rectangle around the word (the old
+   `inset: 0` pill read as a box). */
+.pd-nav__link::before {
+  content: "";
+  position: absolute;
+  inset: -7px -12px;
+  z-index: -1;
+  background: radial-gradient(
+    62% 74% at 50% 50%,
+    var(--pd-accent-soft) 0%,
+    rgba(37, 99, 235, 0.07) 46%,
+    transparent 74%
+  );
+  filter: blur(7px);
+  opacity: 0;
+  transform: scale(0.7);
+  transition: opacity 0.3s ease, transform 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+
+/* Gradient underline: draws in from the left, then the gradient drifts while
+   hovered so the bar looks alive rather than just switching on. */
+.pd-nav__link::after {
+  content: "";
+  position: absolute;
+  left: 1rem;
+  right: 1rem;
+  bottom: 0.34rem;
+  height: 2px;
+  border-radius: 999px;
+  background-image: linear-gradient(
+    90deg,
+    var(--pd-accent),
+    var(--pd-accent-2),
+    var(--pd-accent)
+  );
+  background-size: 200% 100%;
+  background-repeat: no-repeat;
+  background-position: 0% 0;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.34s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.3s ease;
+}
+
+/* Hover / keyboard focus: lift + accent tint. Deliberately no `box-shadow` on
+   the link itself — that draws a rounded rectangle behind the label. */
+.pd-nav__link:hover,
+.pd-nav__link:focus-visible {
+  color: var(--pd-accent);
+  transform: translateY(-2px);
+}
+
+.pd-nav__link:hover::before,
+.pd-nav__link:focus-visible::before {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.pd-nav__link:hover::after,
+.pd-nav__link:focus-visible::after {
+  transform: scaleX(1);
+  box-shadow: 0 0 10px -2px rgba(37, 99, 235, 0.35);
+}
+
+/* subtle drifting shimmer across the underline when hovered */
+.pd-nav__link:hover::after,
+.pd-nav__link:focus-visible::after {
+  animation: pd-nav-shimmer 3.5s linear infinite;
+}
+
+@keyframes pd-nav-shimmer {
+  0% { background-position: 0% 0; }
+  50% { background-position: 100% 0; }
+  100% { background-position: 0% 0; }
+}
+
+/* Active page: accent label + a lit halo and underline — still no box. */
+.pd-nav__link.is-active {
+  color: var(--pd-accent);
+  font-weight: 600;
+}
+
+.pd-nav__link.is-active::before {
+  opacity: 0.8;
+  transform: scale(1);
+}
+
+.pd-nav__link.is-active::after {
+  transform: scaleX(1);
+  box-shadow: 0 0 10px -2px rgba(37, 99, 235, 0.32);
+  animation: pd-nav-underline-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.16s backwards;
+}
+
+.pd-nav__link:focus-visible {
+  outline: 2px solid var(--pd-accent);
+  outline-offset: 2px;
+}
+
+/* Gradient-filled label on hover/focus. Guarded by @supports so a browser
+   without background-clip:text keeps a solid accent color instead of ending up
+   with transparent, invisible text. */
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .pd-nav__link {
+    background-image: linear-gradient(90deg, var(--pd-accent), var(--pd-accent-2));
+    background-size: 100% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+
+  .pd-nav__link:hover,
+  .pd-nav__link:focus-visible {
+    color: transparent;
+  }
+}
+
+/* Stagger the entrance so the bar assembles left-to-right on each page load. */
+.pd-nav__link:nth-child(2) { animation-delay: 0.1s; }
+.pd-nav__link:nth-child(3) { animation-delay: 0.16s; }
+.pd-nav__link:nth-child(4) { animation-delay: 0.22s; }
+.pd-nav__link:nth-child(5) { animation-delay: 0.28s; }
+.pd-nav__link:nth-child(6) { animation-delay: 0.34s; }
+.pd-nav__link:nth-child(7) { animation-delay: 0.4s; }
+
+@keyframes pd-nav-link-in {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pd-nav-underline-in {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+/* The underline is a static gradient: no drifting shimmer. Decorative loops were
+   removed so nothing on the page moves on its own. */
+
+.pd-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.pd-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--pd-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--pd-muted);
+  border: 1px solid var(--pd-border);
+  background: #fff;
+  border-radius: 999px;
+  padding: 0.35rem 0.7rem;
+}
+
+/* Static status dot — it no longer blinks (no continuously moving decoration). */
+.pd-dot {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 999px;
+  background: var(--pd-accent);
+  flex: 0 0 auto;
+}
+
+.pd-dot--ok {
+  background: #16a34a;
+}
+
+.pd-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-family: var(--pd-font);
+  font-size: 0.82rem;
+  font-weight: 600;
+  /* Button labels must never wrap: at tight desktop widths (and while the
+     webfont is still swapping in) the header CTA could otherwise break to two
+     lines and jump from 42px to 61px tall. */
+  white-space: nowrap;
+  padding: 0.62rem 1.05rem;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, color 0.18s ease;
+}
+
+.pd-btn svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.pd-btn--solid {
+  background: linear-gradient(120deg, var(--pd-accent), var(--pd-accent-2));
+  color: #fff;
+  box-shadow: 0 4px 12px -8px rgba(37, 99, 235, 0.5);
+}
+
+.pd-btn--solid:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px -10px rgba(37, 99, 235, 0.55);
+}
+
+.pd-btn--ghost {
+  background: #fff;
+  border-color: var(--pd-border);
+  color: var(--pd-text);
+}
+
+.pd-btn--ghost:hover {
+  border-color: var(--pd-accent);
+  color: var(--pd-accent);
+  transform: translateY(-2px);
+}
+
+/* ----------------------------------------------------- burger + drawer */
+
+.pd-burger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  width: 2.6rem;
+  height: 2.6rem;
+  padding: 0 0.6rem;
+  border-radius: 12px;
+  border: 1px solid var(--pd-border);
+  background: #fff;
+  cursor: pointer;
+}
+
+.pd-burger span {
+  display: block;
+  height: 2px;
+  width: 100%;
+  border-radius: 2px;
+  background: var(--pd-text);
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.pd-burger[aria-expanded='true'] span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+.pd-burger[aria-expanded='true'] span:nth-child(2) { opacity: 0; }
+.pd-burger[aria-expanded='true'] span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+.pd-drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+}
+
+.pd-drawer[hidden] {
+  display: none;
+}
+
+.pd-drawer__panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: min(23rem, 90vw);
+  height: 100%;
+  overflow-y: auto;
+  background: #fff;
+  border-left: 1px solid var(--pd-border);
+  padding: 1.25rem 1.25rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  transform: translateX(102%);
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.pd-drawer.is-open .pd-drawer__panel {
+  transform: translateX(0);
+}
+
+.pd-drawer__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(9, 14, 30, 0.42);
+  opacity: 0;
+  transition: opacity 0.28s ease;
+}
+
+.pd-drawer.is-open .pd-drawer__backdrop {
+  opacity: 1;
+}
+
+.pd-drawer__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pd-drawer__title {
+  font-family: var(--pd-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--pd-muted);
+}
+
+.pd-drawer__close {
+  border: 1px solid var(--pd-border);
+  background: #fff;
+  border-radius: 10px;
+  width: 2.1rem;
+  height: 2.1rem;
+  font-size: 1.15rem;
+  line-height: 1;
+  color: var(--pd-text);
+  cursor: pointer;
+}
+
+.pd-drawer__nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.pd-drawer__link {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.7rem 0.8rem;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  text-decoration: none;
+  color: var(--pd-text);
+  font-family: var(--pd-font);
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: background 0.18s ease, border-color 0.18s ease;
+}
+
+.pd-drawer__link small {
+  font-family: var(--pd-mono);
+  font-size: 0.63rem;
+  color: var(--pd-muted);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+
+.pd-drawer__link:hover,
+.pd-drawer__link.is-active {
+  background: var(--pd-accent-soft);
+  border-color: var(--pd-accent-soft);
+  color: var(--pd-accent);
+}
+
+.pd-drawer__section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--pd-border);
+}
+
+/* ------------------------------------------------------------- socials */
+
+.pd-socials {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.pd-socials--drawer {
+  flex-direction: column;
+}
+
+.pd-social {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.45rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid var(--pd-border);
+  background: #fff;
+  color: var(--pd-text);
+  font-family: var(--pd-font);
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform 0.18s ease, border-color 0.18s ease, color 0.18s ease, background 0.18s ease;
+}
+
+.pd-social__icon {
+  display: inline-flex;
+  width: 1.05rem;
+  height: 1.05rem;
+}
+
+.pd-social__icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.pd-social:hover {
+  transform: translateY(-2px);
+  color: var(--pd-social-accent, var(--pd-accent));
+  border-color: var(--pd-social-accent, var(--pd-accent));
+  background: color-mix(in srgb, var(--pd-social-accent, var(--pd-accent)) 9%, #fff);
+}
+
+.pd-social--chip {
+  border-radius: 12px;
+}
+
+/* -------------------------------------------------------------- footer */
+
+.pd-footer {
+  margin-top: 4rem;
+  background: linear-gradient(180deg, #fff, var(--pd-surface));
+  border-top: 1px solid var(--pd-border);
+  padding: 3.25rem 0 1.25rem;
+  font-family: var(--pd-font);
+}
+
+.pd-footer__grid {
+  display: grid;
+  grid-template-columns: 1.5fr 0.9fr 1fr 1.3fr;
+  gap: clamp(1.75rem, 3vw, 3.5rem) clamp(1.5rem, 2.25vw, 2.75rem);
+  align-items: start;
+}
+
+.pd-footer__col:nth-child(3),
+.pd-footer__col:nth-child(4) {
+  padding-left: 0.5rem;
+}
+
+.pd-footer__col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  min-width: 0;
+  padding-right: 0.25rem;
+}
+
+/* Grid tracks default to min-content on the inline axis, so a long unbroken
+   string (e.g. the email address) can push the track past the viewport and
+   scroll the whole page sideways. minmax(0, ...) lets tracks shrink. */
+.pd-footer__grid > * {
+  min-width: 0;
+}
+
+.pd-brand--footer .pd-brand__name {
+  font-size: 1.15rem;
+}
+
+.pd-footer__bio {
+  margin: 0.85rem 0 1rem;
+  max-width: 34ch;
+}
+
+.pd-footer__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.pd-chip {
+  font-family: var(--pd-mono);
+  font-size: 0.63rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid var(--pd-border);
+  background: #fff;
+  color: var(--pd-muted);
+}
+
+.pd-chip--accent {
+  color: var(--pd-accent);
+  border-color: var(--pd-accent-soft);
+  background: var(--pd-accent-soft);
+  font-weight: 600;
+}
+
+.pd-footer__heading {
+  font-family: var(--pd-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--pd-muted);
+  margin: 0 0 0.2rem;
+}
+
+.pd-footer__links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.pd-footer__links a {
+  color: var(--pd-text);
+  text-decoration: none;
+  font-size: 0.88rem;
+  font-weight: 500;
+  transition: color 0.18s ease, transform 0.18s ease;
+  display: inline-block;
+}
+
+.pd-footer__links a:hover,
+.pd-footer__links a.is-active {
+  color: var(--pd-accent);
+  transform: translateX(3px);
+}
+
+.pd-footer__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.pd-footer__list li {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: 0.82rem;
+  color: var(--pd-muted);
+  border-bottom: 1px dashed var(--pd-border);
+  padding-bottom: 0.55rem;
+}
+
+.pd-footer__list strong {
+  color: var(--pd-text);
+  font-family: var(--pd-mono);
+  font-size: 0.76rem;
+  font-weight: 600;
+}
+
+.pd-copy {
+  width: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.15rem;
+  font-size: 0.75rem;
+  margin-top: 0.35rem;
+}
+
+.pd-copy code {
+  font-family: var(--pd-mono);
+  font-size: 0.72rem;
+  color: var(--pd-accent);
+}
+
+.pd-footer__note {
+  margin-top: 0.2rem;
+  max-width: 30ch;
+  line-height: 1.7;
+}
+
+.pd-footer__bottom {
+  margin-top: 2.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--pd-border);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font-family: var(--pd-mono);
+  font-size: 0.7rem;
+  color: var(--pd-muted);
+}
+
+.pd-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.pd-footer__top {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--pd-accent);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.pd-footer__top svg {
+  width: 0.9rem;
+  height: 0.9rem;
+  transition: transform 0.2s ease;
+}
+
+.pd-footer__top:hover svg {
+  transform: translateY(-3px);
+}
+/* --------------------------------------------- toasts + back to top */
+
+.pd-toasts {
+  position: fixed;
+  left: 50%;
+  bottom: 1.25rem;
+  transform: translateX(-50%);
+  z-index: 120;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: min(26rem, calc(100vw - 2rem));
+  pointer-events: none;
+}
+
+.pd-toast {
+  pointer-events: auto;
+  background: #0b1220;
+  color: #fff;
+  border-radius: 14px;
+  padding: 0.75rem 0.95rem;
+  font-family: var(--pd-font);
+  font-size: 0.85rem;
+  box-shadow: 0 8px 24px -16px rgba(2, 6, 23, 0.5);
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  border-left: 3px solid var(--pd-accent);
+  animation: pd-toast-in 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.pd-toast--success { border-left-color: #22c55e; }
+.pd-toast--error { border-left-color: #ef4444; }
+.pd-toast--info { border-left-color: #38bdf8; }
+
+.pd-toast.is-leaving {
+  animation: pd-toast-out 0.24s ease forwards;
+}
+
+.pd-toast__title {
+  font-weight: 600;
+  display: block;
+  margin-bottom: 0.1rem;
+}
+
+.pd-toast__body {
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
+@keyframes pd-toast-in {
+  from { opacity: 0; transform: translateY(14px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes pd-toast-out {
+  to { opacity: 0; transform: translateY(10px) scale(0.98); }
+}
+
+.pd-totop {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  z-index: 80;
+  width: 2.75rem;
+  height: 2.75rem;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  border: 1px solid var(--pd-border);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  color: var(--pd-text);
+  cursor: pointer;
+  box-shadow: 0 16px 30px -20px rgba(15, 23, 42, 0.7);
+  transition: transform 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+}
+
+.pd-totop svg {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+.pd-totop:hover {
+  transform: translateY(-3px);
+  color: var(--pd-accent);
+  border-color: var(--pd-accent);
+}
+
+.pd-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 65;
+  background: rgba(9, 14, 30, 0.25);
+  backdrop-filter: blur(2px);
+}
+
+.pd-scrim[hidden] {
+  display: none;
+}
+
+/* ------------------------------------------- scrollbar + reveal + utils */
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: block !important;
+  width: 10px !important;
+  height: 10px !important;
+}
+
+html::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track {
+  background: var(--pd-surface) !important;
+}
+
+html::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--pd-accent), var(--pd-accent-2)) !important;
+  border-radius: 999px !important;
+  border: 2px solid var(--pd-surface) !important;
+}
+
+.pd-reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1), transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.pd-reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Section-level entrance is the only animation on the site; with reduced
+     motion everything renders in its final state. */
+  .pd-reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .pd-drawer__panel,
+  .pd-toast {
+    animation: none;
+    transition: none;
+  }
+  .pd-nav__link,
+  .pd-nav__link.is-active::after,
+  .pd-nav__link:hover::after,
+  .pd-nav__link:focus-visible::after {
+    animation: none;
+  }
+  .pd-nav__link::before,
+  .pd-nav__link::after {
+    transition: none;
+  }
+  .pd-nav__link:hover,
+  .pd-nav__link:focus-visible,
+  .pd-card:hover,
+  .pd-btn--solid:hover {
+    transform: none;
+  }
+  .pd-progress {
+    transition: none;
+  }
+}
+
+:where(a, button, input, textarea, select):focus-visible {
+  outline: 2px solid var(--pd-accent);
+  outline-offset: 2px;
+  border-radius: 8px;
+}/* ============================================================ sections
+   Building blocks for the landing page sections authored on top of the shared
+   chrome (they intentionally do not depend on Tailwind).
+   ======================================================================== */
+
+.pd-section {
+  width: 100%;
+  padding: clamp(3.5rem, 8vw, 6rem) 0;
+}
+
+.pd-section--tint {
+  background: linear-gradient(180deg, var(--pd-surface), #fff);
+}
+
+.pd-section--ink {
+  background: linear-gradient(160deg, #0b1220, #101c36);
+  color: #eef2ff;
+}
+
+.pd-section--ink .pd-section__title,
+.pd-section--ink .pd-section__lead {
+  color: #fff;
+}
+
+.pd-section--ink .pd-muted {
+  color: rgba(238, 242, 255, 0.72);
+}
+
+.pd-section__head {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-width: 62ch;
+  margin-bottom: clamp(2rem, 4vw, 3rem);
+}
+
+.pd-section__title {
+  font-family: var(--pd-display);
+  font-weight: 600;
+  font-size: clamp(1.75rem, 3.4vw, 2.6rem);
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  color: var(--pd-text);
+  margin: 0;
+}
+
+.pd-section__lead {
+  font-family: var(--pd-font);
+  font-size: clamp(0.95rem, 1.4vw, 1.06rem);
+  line-height: 1.7;
+  color: var(--pd-muted);
+  margin: 0;
+}
+
+.pd-grid {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.pd-grid--2 { grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr)); }
+.pd-grid--3 { grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); }
+/* ------------------------------------------------------------- features
+   The four capability lanes read as one system rather than four loose cards:
+   a single rule spans the whole block, each column hangs off that line, and the
+   stack line closes every column at the same baseline.
+   ------------------------------------------------------------------------ */
+
+.pd-section--features {
+  background: linear-gradient(180deg, #fff, var(--pd-surface));
+}
+
+.pd-features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: 0 clamp(1.5rem, 3vw, 2.75rem);
+  border-top: 1px solid var(--pd-border);
+  /* One continuous rule under the whole block. A per-column border-bottom would
+     break into disconnected dashes across the column gaps. */
+  background-image: linear-gradient(var(--pd-border), var(--pd-border));
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 100% 1px;
+}
+
+.pd-feature {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  padding: 1.75rem 0 1.9rem;
+}
+
+.pd-feature__num {
+  font-family: var(--pd-mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  color: var(--pd-accent);
+}
+
+.pd-feature__title {
+  font-family: var(--pd-display);
+  font-size: 1.15rem;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  color: var(--pd-text);
+  margin: 0;
+}
+
+.pd-feature__text {
+  font-family: var(--pd-font);
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: var(--pd-muted);
+  margin: 0;
+  flex: 1;
+}
+
+/* Plain meta line instead of pill badges: same information, far less noise. */
+.pd-feature__stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 0.55rem;
+  font-family: var(--pd-mono);
+  font-size: 0.72rem;
+  line-height: 1.6;
+  color: var(--pd-muted);
+  margin: 0.4rem 0 0;
+}
+
+/* Trailing separator, tied to the item before it with non-breaking spaces so a
+   wrap can never leave a leading "·" stranded at the start of a line. */
+.pd-feature__stack > span:not(:last-child)::after {
+  content: '\00a0·\00a0';
+  color: var(--pd-border);
+}
+
+@media (max-width: 720px) {
+  .pd-features {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+
+  .pd-feature {
+    padding: 1.4rem 0 1.55rem;
+  }
+}
+
+.pd-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  border-radius: var(--pd-radius);
+  border: 1px solid var(--pd-border);
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+  overflow: hidden;
+}
+
+.pd-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px -20px rgba(15, 23, 42, 0.4);
+  border-color: color-mix(in srgb, var(--pd-accent) 22%, var(--pd-border));
+}
+
+.pd-card__title {
+  font-family: var(--pd-display);
+  font-size: 1.12rem;
+  font-weight: 600;
+  color: var(--pd-text);
+  margin: 0;
+  line-height: 1.25;
+}
+
+.pd-card__text {
+  font-family: var(--pd-font);
+  font-size: 0.88rem;
+  line-height: 1.65;
+  color: var(--pd-muted);
+  margin: 0;
+}
+
+.pd-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--pd-font);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--pd-accent);
+  text-decoration: none;
+}
+
+.pd-link svg {
+  width: 0.95rem;
+  height: 0.95rem;
+  transition: transform 0.2s ease;
+}
+
+.pd-link:hover svg {
+  transform: translateX(4px);
+}
+
+.pd-band {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: clamp(1.75rem, 4vw, 2.75rem);
+  border-radius: 22px;
+  border: 1px solid var(--pd-border);
+  background: linear-gradient(130deg, #fff, var(--pd-surface));
+  box-shadow: 0 10px 30px -26px rgba(15, 23, 42, 0.35);
+}
+
+.pd-band__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.pd-steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: 0.85rem;
+}
+
+.pd-step {
+  border-radius: var(--pd-radius);
+  border: 1px solid var(--pd-border);
+  background: #fff;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.pd-step__title {
+  font-family: var(--pd-display);
+  font-weight: 600;
+  font-size: 0.98rem;
+  color: var(--pd-text);
+}
+
+/* ------------------------------------------------------------- depth
+   Elevation and motion for the section building blocks. Two rules govern
+   everything in this block:
+
+     1. Nothing loops. Entrance is scroll-driven, feedback is hover/pointer-
+        driven. Idle looping motion carries no information, so it is omitted
+        deliberately (see the reduced-motion note further down).
+     2. Only `transform`, `opacity` and `box-shadow` animate, so the work stays
+        on the compositor and never blocks scrolling on the main thread.
+   ---------------------------------------------------------------------- */
+
+:root {
+  /* Layered shadows read as real light rather than a grey smudge: a tight
+     contact shadow plus a wide, low-opacity ambient one. */
+  --pd-e1: 0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 1px rgba(15, 23, 42, 0.03);
+  --pd-e2: 0 2px 4px rgba(15, 23, 42, 0.04), 0 8px 20px -8px rgba(15, 23, 42, 0.1);
+  --pd-e3: 0 4px 8px rgba(15, 23, 42, 0.04), 0 18px 40px -12px rgba(15, 23, 42, 0.16);
+  /* The accent-tinted top layer is what makes a hover feel lit rather than
+     just "moved up". */
+  --pd-e4: 0 6px 12px rgba(15, 23, 42, 0.05), 0 30px 60px -18px rgba(8, 145, 178, 0.28);
+  --pd-spring: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.pd-section--tint {
+  background:
+    radial-gradient(58rem 28rem at 12% -12%, rgba(8, 145, 178, 0.07), transparent 62%),
+    linear-gradient(180deg, var(--pd-surface), #fff);
+}
+
+.pd-section--features {
+  background:
+    radial-gradient(52rem 26rem at 88% 0%, rgba(37, 99, 235, 0.06), transparent 60%),
+    linear-gradient(180deg, #fff, var(--pd-surface));
+}
+
+.pd-section--ink {
+  background:
+    radial-gradient(50rem 26rem at 78% 0%, rgba(8, 145, 178, 0.28), transparent 60%),
+    linear-gradient(160deg, #0b1220, #101c36);
+}
+
+.pd-card {
+  position: relative;
+  isolation: isolate;
+  background: linear-gradient(180deg, #fff, #fdfeff);
+  box-shadow: var(--pd-e2);
+  /* The tilt variables sit at 0 until the pointer handler feeds them, so this
+     is a flat card at rest. While the pointer is inside, .is-tilting below
+     swaps the long spring for a short linear follow. */
+  transform: perspective(900px) rotateX(var(--pd-tilt-x, 0deg)) rotateY(var(--pd-tilt-y, 0deg));
+  transition:
+    transform 0.45s var(--pd-spring),
+    box-shadow 0.45s var(--pd-spring),
+    border-color 0.45s var(--pd-spring);
+}
+
+/* Fast, lag-free cursor tracking while hovering; entry and exit settle with
+   the long spring. The shorthand resets transition-delay, so the stagger
+   delay paid on entrance never lags the tilt. */
+.pd-card.is-tilting {
+  transition:
+    transform 0.12s linear,
+    box-shadow 0.45s var(--pd-spring),
+    border-color 0.45s var(--pd-spring);
+  transition-delay: 0s !important;
+}
+
+/* Cursor-tracked highlight. The centre is driven by --pd-px/--pd-py from the
+   delegated pointer handler in portfolio.js; it is parked off-card at rest so
+   the default state costs nothing. Negative z-index keeps it above the card's
+   own background (isolation: isolate traps it in this stacking context) but
+   below the text. */
+.pd-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: radial-gradient(
+    16rem circle at var(--pd-px, 50%) var(--pd-py, -25%),
+    rgba(8, 145, 178, 0.14),
+    rgba(37, 99, 235, 0.07) 45%,
+    transparent 72%
+  );
+  opacity: 0;
+  transition: opacity 0.45s var(--pd-spring);
+  pointer-events: none;
+}
+
+/* Specular sheen that sweeps the surface on hover. */
+.pd-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: linear-gradient(105deg, transparent 32%, rgba(255, 255, 255, 0.7) 46%, transparent 60%);
+  background-size: 250% 100%;
+  background-position: 135% 0;
+  opacity: 0;
+  transition: opacity 0.4s ease, background-position 0.85s var(--pd-spring);
+  pointer-events: none;
+}
+
+.pd-card:hover,
+.pd-card:focus-within {
+  transform: perspective(900px) rotateX(var(--pd-tilt-x, 0deg)) rotateY(var(--pd-tilt-y, 0deg)) translateY(-4px);
+  box-shadow: var(--pd-e4);
+  border-color: color-mix(in srgb, var(--pd-accent) 34%, var(--pd-border));
+}
+
+.pd-card:hover::before,
+.pd-card:focus-within::before,
+.pd-card:hover::after,
+.pd-card:focus-within::after {
+  opacity: 1;
+}
+
+.pd-card:hover::after,
+.pd-card:focus-within::after {
+  background-position: -35% 0;
+}
+
+.pd-card__title {
+  transition: color 0.4s ease;
+}
+
+.pd-card:hover .pd-card__title {
+  color: var(--pd-accent);
+}
+
+/* Gradient text — the one palette move (cyan → blue → coral). Guarded so a
+   browser without background-clip:text keeps a solid accent, not nothing. */
+.pd-text-gradient {
+  color: var(--pd-accent);
+}
+
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .pd-text-gradient {
+    background-image: linear-gradient(90deg, var(--pd-accent), var(--pd-accent-2) 55%, var(--pd-coral));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}
+
+/* Icon chip: a gradient tile that answers the card hover with a small spring. */
+.pd-card__icon {
+  width: 2.75rem;
+  height: 2.75rem;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  border-radius: 13px;
+  background: linear-gradient(135deg, var(--pd-accent), var(--pd-accent-2));
+  color: #fff;
+  font-size: 1.05rem;
+  box-shadow: 0 8px 18px -10px rgba(8, 145, 178, 0.65);
+  transition: transform 0.45s var(--pd-spring), box-shadow 0.45s var(--pd-spring);
+}
+
+.pd-card:hover .pd-card__icon {
+  transform: translateY(-2px) scale(1.06) rotate(-4deg);
+  box-shadow: 0 12px 24px -10px rgba(37, 99, 235, 0.55);
+}
+
+/* Card entrance settle: when a reveal wrapper lights up, its cards land a
+   beat after the block they sit in. `backwards` fill only, so once the
+   animation finishes the element's own (tilt-aware) transform takes back
+   over and the hover lift is unaffected. */
+@keyframes pd-card-in {
+  from { transform: scale(0.965); opacity: 0.55; }
+  to   { transform: scale(1);     opacity: 1; }
+}
+
+.pd-reveal.is-visible .pd-card,
+.pd-card.pd-reveal.is-visible {
+  animation: pd-card-in 0.85s var(--pd-spring) backwards;
+}
+
+.pd-grid > .pd-card:nth-child(2) {
+  animation-delay: 100ms;
+}
+
+/* Stats: compact metric cards with a gradient rule that lights up on hover. */
+.pd-stat {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 1.4rem 1.5rem;
+  border-radius: var(--pd-radius);
+  border: 1px solid var(--pd-border);
+  background: linear-gradient(180deg, #fff, #fdfeff);
+  box-shadow: var(--pd-e1);
+  overflow: hidden;
+  transition: transform 0.4s var(--pd-spring), box-shadow 0.4s var(--pd-spring),
+    border-color 0.4s var(--pd-spring);
+}
+
+.pd-stat::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--pd-accent), var(--pd-accent-2) 55%, var(--pd-coral));
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.pd-stat:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--pd-e4);
+  border-color: color-mix(in srgb, var(--pd-accent) 28%, var(--pd-border));
+}
+
+.pd-stat:hover::before {
+  opacity: 1;
+}
+
+.pd-stat__value {
+  font-family: var(--pd-display);
+  font-weight: 700;
+  font-size: clamp(1.5rem, 2.4vw, 2rem);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--pd-text);
+}
+
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .pd-stat__value {
+    background-image: linear-gradient(90deg, var(--pd-accent), var(--pd-accent-2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}
+
+.pd-stat__label {
+  margin: 0;
+  font-size: 0.83rem;
+  line-height: 1.5;
+  color: var(--pd-muted);
+}
+
+/* Hero: staggered load-in + a slowly rotating halo ring behind the portrait.
+   Both are disabled under prefers-reduced-motion (see the block further
+   down). */
+@keyframes pd-hero-in {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.pd-hero [data-hero] {
+  animation: pd-hero-in 0.85s var(--pd-spring) backwards;
+  animation-delay: calc(90ms + var(--pd-hero-i, 0) * 90ms);
+}
+
+.pd-halo {
+  position: absolute;
+  inset: -1.5rem;
+  z-index: 0;
+  border-radius: 999px;
+  background: conic-gradient(
+    from 90deg,
+    rgba(8, 145, 178, 0) 0deg,
+    rgba(8, 145, 178, 0.6) 80deg,
+    rgba(37, 99, 235, 0.55) 170deg,
+    rgba(249, 115, 22, 0.45) 260deg,
+    rgba(8, 145, 178, 0) 360deg
+  );
+  -webkit-mask: radial-gradient(closest-side, transparent 58%, #000 60%);
+  mask: radial-gradient(closest-side, transparent 58%, #000 60%);
+  filter: blur(5px);
+  opacity: 0.85;
+  animation: pd-halo-spin 16s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes pd-halo-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Feature title: a cyan → coral rule that draws in on hover. */
+.pd-feature__title {
+  position: relative;
+}
+
+.pd-feature__title::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -0.4rem;
+  width: 2.6rem;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--pd-accent), var(--pd-coral));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.45s var(--pd-spring);
+}
+
+.pd-feature:hover .pd-feature__title::after {
+  transform: scaleX(1);
+}
+
+/* ------------------------------------------------------------- features
+   The four lanes hang off one continuous rule, so they get a wash rather than
+   a card: a floating card would detach them from the shared baseline the
+   whole block is built on. */
+.pd-feature {
+  position: relative;
+  isolation: isolate;
+  border-radius: 14px;
+  transition: transform 0.45s var(--pd-spring);
+}
+
+.pd-feature::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(8, 145, 178, 0.07), rgba(8, 145, 178, 0) 72%);
+  opacity: 0;
+  transition: opacity 0.45s var(--pd-spring);
+  pointer-events: none;
+}
+
+.pd-feature:hover {
+  transform: translateY(-3px);
+}
+
+.pd-feature:hover::before {
+  opacity: 1;
+}
+
+.pd-feature__title,
+.pd-feature__num {
+  transition: color 0.4s ease, letter-spacing 0.4s var(--pd-spring);
+}
+
+.pd-feature:hover .pd-feature__title {
+  color: var(--pd-accent);
+}
+
+.pd-feature:hover .pd-feature__num {
+  letter-spacing: 0.22em;
+}
+
+.pd-band {
+  background:
+    radial-gradient(40rem 20rem at 6% 0%, rgba(8, 145, 178, 0.08), transparent 60%),
+    linear-gradient(130deg, #fff, var(--pd-surface));
+  box-shadow: var(--pd-e3);
+  transition: transform 0.45s var(--pd-spring), box-shadow 0.45s var(--pd-spring);
+}
+
+.pd-band:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--pd-e4);
+  border-color: color-mix(in srgb, var(--pd-accent) 26%, var(--pd-border));
+}
+
+.pd-step {
+  box-shadow: var(--pd-e1);
+  transition: transform 0.4s var(--pd-spring), box-shadow 0.4s var(--pd-spring),
+    border-color 0.4s var(--pd-spring);
+}
+
+.pd-step:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--pd-e2);
+  border-color: color-mix(in srgb, var(--pd-accent) 26%, var(--pd-border));
+}
+
+/* --------------------------------------------------------------- stagger
+   Grid siblings reveal in reading order. The delay is only ever paid on
+   entrance — a revealed element keeps the delay but has nothing left to
+   transition, so hover stays instant. */
+.pd-grid > *:nth-child(2),
+.pd-features > *:nth-child(2),
+.pd-steps > *:nth-child(2) { transition-delay: 70ms; }
+
+.pd-grid > *:nth-child(3),
+.pd-features > *:nth-child(3),
+.pd-steps > *:nth-child(3) { transition-delay: 140ms; }
+
+.pd-grid > *:nth-child(4),
+.pd-features > *:nth-child(4),
+.pd-steps > *:nth-child(4) { transition-delay: 210ms; }
+
+.pd-grid > *:nth-child(5),
+.pd-features > *:nth-child(5),
+.pd-steps > *:nth-child(5) { transition-delay: 280ms; }
+
+.pd-stats > *:nth-child(2) { transition-delay: 70ms; }
+.pd-stats > *:nth-child(3) { transition-delay: 140ms; }
+.pd-stats > *:nth-child(4) { transition-delay: 210ms; }
+
+/* --------------------------------------------------- reduced motion (II)
+   The block near the top of this file handles the original entrance animation,
+   but these depth rules are declared after it and would otherwise win on
+   source order. Everything that moves, glows or staggers is neutralised here
+   so the enhanced styling still renders — as flat, static depth. */
+@media (prefers-reduced-motion: reduce) {
+  .pd-card,
+  .pd-band,
+  .pd-step,
+  .pd-feature,
+  .pd-stat,
+  .pd-card__icon,
+  .pd-feature__title::after {
+    transition: none;
+  }
+
+  /* Kill the tilt outright: the base transform also carries the JS-driven
+     rotateX/rotateY, and none of it is wanted here. */
+  .pd-card {
+    transform: none !important;
+  }
+
+  .pd-hero [data-hero],
+  .pd-halo,
+  .pd-reveal.is-visible .pd-card,
+  .pd-card.pd-reveal.is-visible {
+    animation: none;
+  }
+
+  .pd-halo {
+    opacity: 0.35;
+  }
+
+  .pd-card:hover,
+  .pd-card:focus-within,
+  .pd-band:hover,
+  .pd-step:hover,
+  .pd-feature:hover,
+  .pd-stat:hover {
+    transform: none;
+  }
+
+  .pd-card::before,
+  .pd-card::after,
+  .pd-feature::before {
+    /* Kill the cursor-tracked highlight and the sheen outright — they are
+       decorative and have no reduced-motion-safe static form. */
+    display: none;
+  }
+
+  .pd-card__title,
+  .pd-feature__title,
+  .pd-feature__num {
+    transition: none;
+  }
+
+  .pd-feature:hover .pd-feature__num {
+    letter-spacing: 0.16em;
+  }
+
+  .pd-grid > *,
+  .pd-features > *,
+  .pd-steps > *,
+  .pd-stats > * {
+    transition-delay: 0ms !important;
+  }
+}
+
+/* --------------------------------------------------------- responsive */
+
+@media (max-width: 1180px) {
+  .pd-nav {
+    display: none;
+  }
+  .pd-burger {
+    display: flex;
+  }
+  .pd-footer__grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 720px) {
+  :root {
+    --pd-header-h: 4.75rem;
+  }
+  .pd-brand__role {
+    display: none;
+  }
+  .pd-header__cta {
+    display: none;
+  }
+  /* The availability pill pushes the burger past the viewport on narrow phones.
+     The same availability text is already in the drawer, so drop it here. */
+  .pd-pill {
+    display: none;
+  }
+  .pd-footer {
+    padding-top: 2.5rem;
+  }
+  .pd-footer__grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.75rem;
+  }
+  .pd-footer__bottom {
+    justify-content: center;
+    text-align: center;
+  }
+  .pd-section {
+    padding: 3rem 0;
+  }
+}
+
+@media print {
+  .pd-header,
+  .pd-footer,
+  .pd-totop,
+  .pd-toasts,
+  .pd-scrim {
+    display: none !important;
+  }
+  body.pd-offset {
+    padding-top: 0 !important;
+  }
+}
+

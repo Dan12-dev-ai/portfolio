@@ -1,0 +1,97 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 220 28% 98%;
+    --foreground: 220 41% 15%;
+    --card: 0 0% 100%;
+    --card-foreground: 220 41% 15%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 41% 15%;
+    --primary: 195 78% 39%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 215 76% 53%;
+    --secondary-foreground: 220 40% 98%;
+    --muted: 214 27% 96%;
+    --muted-foreground: 220 16% 42%;
+    --accent: 198 87% 92%;
+    --accent-foreground: 195 78% 20%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214 24% 88%;
+    --input: 214 24% 88%;
+    --ring: 195 78% 39%;
+    --radius: 0.85rem;
+  }
+
+  .dark {
+    --background: 221 39% 11%;
+    --foreground: 210 40% 98%;
+    --card: 222 39% 11%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222 39% 11%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 196 100% 72%;
+    --primary-foreground: 222 47% 11%;
+    --secondary: 217 32% 17%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217 32% 17%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 197 57% 35%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217 32% 17%;
+    --input: 217 32% 17%;
+    --ring: 212 27% 84%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: #f5f7fa;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    background-image:
+      radial-gradient(circle at top left, rgba(14, 165, 233, 0.08), transparent 30%),
+      radial-gradient(circle at bottom right, rgba(59, 130, 246, 0.06), transparent 28%),
+      linear-gradient(180deg, #f5f7fa 0%, #f9fafb 100%);
+    font-family: var(--font-geist), 'Inter', 'Segoe UI', sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-geist), 'Segoe UI', sans-serif;
+    letter-spacing: -0.04em;
+  }
+
+  p, li, span, a, button {
+    font-family: var(--font-geist), 'Inter', 'Segoe UI', sans-serif;
+  }
+
+  code, pre, .mono, .font-mono {
+    font-family: var(--font-ibm-plex-mono), var(--font-mono), 'SFMono-Regular', monospace;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #edf2f7;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #0ea5e9, #2563eb);
+  border-radius: 999px;
+}
