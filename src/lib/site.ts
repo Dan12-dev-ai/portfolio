@@ -9,7 +9,7 @@
  * Every external URL can be overridden with an environment variable (see
  * `.env.example`) so the owner can repoint a platform without touching markup:
  *
- *   NEXT_PUBLIC_SITE_URL   canonical origin, e.g. https://danieldegu.dev
+ *   NEXT_PUBLIC_SITE_URL   canonical origin, e.g. https://danid.vercel.app
  *   LINKEDIN_URL           https://www.linkedin.com/in/<handle>
  *   GITHUB_URL             https://github.com/<handle>
  *   X_URL                  https://x.com/<handle>

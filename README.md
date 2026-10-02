@@ -1,4 +1,4 @@
-# danieldegu.dev
+# portfolio
 
 Production portfolio and engineering record for **Daniel Degu**, AI and Distributed Systems Engineer.
 
@@ -138,8 +138,8 @@ External URLs are overridable through environment variables, and display handles
 ### Installation
 
 ```bash
-git clone https://github.com/Dan12-dev-ai/danid-portfolio.git
-cd danid-portfolio
+git clone https://github.com/Dan12-dev-ai/portfolio.git
+cd portfolio
 npm install
 ```
 
@@ -191,7 +191,7 @@ Copy `.env.example` to `.env.local` and set only what you need. Every key is opt
 ## Project Structure
 
 ```text
-danid-portfolio/
+portfolio/
 ├── data/                          Runtime JSON store (git-ignored)
 │   └── portfolio-db.json          Messages, subscribers, click events
 ├── docs/
@@ -340,16 +340,25 @@ The console is intentionally minimal. It is an operational tool, not a content m
 
 ## Deployment
 
-The project deploys to Vercel without additional configuration.
+The project deploys to Vercel without additional build configuration. Vercel detects Next.js and applies the correct defaults.
 
-1. Push the repository to GitHub.
-2. Import it in Vercel. The framework preset is detected automatically.
-3. Set `ADMIN_TOKEN` and `NEXT_PUBLIC_SITE_URL` in the project environment variables.
+1. Import the repository at <https://github.com/Dan12-dev-ai/portfolio> from the Vercel dashboard.
+2. Add the environment variables below before the first production deploy.
+3. Assign the production domain. The canonical origin is `https://danid.vercel.app`, which is also the value of `NEXT_PUBLIC_SITE_URL`.
 4. Deploy.
+
+Setting `NEXT_PUBLIC_SITE_URL` matters. When it is empty, the sitemap and robots generators fall back to the request host, and `metadataBase` is left undefined, which makes Next.js warn and resolve social images against `localhost`. Setting it explicitly keeps canonical URLs, the sitemap and Open Graph tags correct in production.
+
+### Environment variables required in production
+
+| Variable | Value |
+| --- | --- |
+| `ADMIN_TOKEN` | A strong, unique secret. **The default is public knowledge.** |
+| `NEXT_PUBLIC_SITE_URL` | `https://danid.vercel.app` |
 
 ### Other platforms
 
-The application requires a Node.js runtime with a writable filesystem, so it suits any long-running Node host. On a platform with an ephemeral or read-only filesystem, point `PORTFOLIO_DATA_DIR` at a mounted volume, or accept that the store falls back to the temp directory and loses data on restart.
+The application requires a Node.js runtime with a writable filesystem, so it suits any long-running Node host. On a platform with an ephemeral or read-only filesystem, point `PORTFOLIO_DATA_DIR` at a mounted volume, or accept that the store falls back to the temp directory and loses contact messages on restart.
 
 ### Pre-deployment checklist
 
