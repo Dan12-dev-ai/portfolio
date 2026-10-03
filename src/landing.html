@@ -64,14 +64,24 @@
       max-width: 1440px;
       width: min(90vw, 1440px);
       margin: 0 auto;
-      padding: 5.5rem 0 3rem;
+      /* The body already clears the fixed header via `pd-offset`
+         (--pd-header-h = 5.25rem). This padding is the *extra* breathing room
+         below it, so it stays modest — a large value here compounds with the
+         offset and pushes the hero content far down the first screen. */
+      padding: 3rem 0 3rem;
     }
     .hero-layout {
       display: grid;
       grid-template-columns: 1.1fr 0.9fr;
-      align-items: center;
+      /* `start`, not `center`: this box is sized to fill the viewport, so
+         centring the (much shorter) content column within it left a large
+         empty band under the fixed header. Aligning to the top lets that slack
+         fall below the fold instead of above the content. */
+      align-items: start;
       gap: 2.5rem;
-      min-height: calc(100vh - 140px);
+      /* Header (5.25rem) + hero-shell vertical padding (3rem + 3rem) keeps the
+         hero filling exactly one viewport without spilling past it. */
+      min-height: calc(100vh - 11.25rem);
     }
     .eyebrow {
       display: inline-flex;
@@ -428,7 +438,7 @@
     .band p { margin: 0.5rem 0 0; color: var(--muted); }
     @media (max-width: 960px) {
       .hero-layout, .focus-grid { grid-template-columns: 1fr; }
-      .hero-shell { padding-top: 4rem; }
+      .hero-shell { padding-top: 2rem; }
       .hero-layout { min-height: auto; }
       .story-header, .band { flex-direction: column; align-items: flex-start; }
       .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
