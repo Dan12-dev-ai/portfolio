@@ -180,7 +180,11 @@ body.pd-offset {
 .pd-nav {
   display: flex;
   align-items: center;
-  gap: 0.2rem;
+  /* Each link carries 1rem of horizontal padding and its hover halo fills that
+     padded box, so at the old 0.2rem the halos of neighbouring links almost
+     touched and the row read as one crowded block. This keeps a clear gutter
+     between link boxes without changing the links themselves. */
+  gap: 0.75rem;
   margin-inline-start: auto;
   padding: 0;
   border-radius: 0;
@@ -528,7 +532,9 @@ body.pd-offset {
 .pd-drawer__nav {
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  /* Same rationale as .pd-nav: the links are full-width tappable rows, and at
+     0.35rem they ran together into one solid block. */
+  gap: 0.6rem;
 }
 
 .pd-drawer__link {
