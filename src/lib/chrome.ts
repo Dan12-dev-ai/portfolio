@@ -116,8 +116,15 @@ export function buildHeader({ active, variant = 'light' }: ChromeOptions): strin
       </button>
     </div>
   </div>
+</header>
 
-  <div class="pd-drawer" id="pd-drawer" data-pd-drawer hidden>
+<!-- The drawer deliberately sits OUTSIDE <header>. .pd-header sets
+     backdrop-filter, which makes the header the containing block for any
+     position:fixed descendant. Nested inside it, .pd-drawer's inset:0
+     resolved against the ~76px header box instead of the viewport and
+     collapsed the panel to a sliver. The runtime finds it by [data-pd-drawer],
+     so its position in the document does not matter. -->
+<div class="pd-drawer" id="pd-drawer" data-pd-drawer hidden>
     <div class="pd-drawer__panel">
       <div class="pd-drawer__head">
         <span class="pd-drawer__title">Navigation</span>
@@ -134,8 +141,7 @@ export function buildHeader({ active, variant = 'light' }: ChromeOptions): strin
       </div>
     </div>
     <div class="pd-drawer__backdrop" data-pd-close tabindex="-1"></div>
-  </div>
-</header>`
+</div>`
 }
 /** Extra containers the client runtime needs on every page. */
 export const RUNTIME_MARKUP = `
